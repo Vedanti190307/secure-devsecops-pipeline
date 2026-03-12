@@ -1,0 +1,24 @@
+name: DevSecOps Pipeline
+
+on: [push]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Bandit
+      run: pip install bandit
+
+    - name: Run Bandit Scan
+      run: bandit -r .
+
+    - name: Build Docker Image
+      run: docker build -t test-image .
+
+    - name: Run Trivy
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'test-image'
